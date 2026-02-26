@@ -76,20 +76,44 @@ idcard:
 
 # 第三方服务配置
 external:
-  # 医保服务
-  medical-insurance:
-    enabled: true
-    api-url: https://api.example.com/medical
+  # 摩熵医药API
+  moneng:
+    enabled: false
+    base-url: https://api.moneng.com
+    api-key: your_moneng_api_key
+    api-secret: your_moneng_api_secret
+    timeout: 30000
 
-  # 医院服务
-  hospital:
-    enabled: true
-    api-url: https://api.example.com/hospital
+  # 腾讯医疗健康API
+  tencent-health:
+    enabled: false
+    base-url: https://api.tencent.com/medical
+    app-key: your_tencent_app_key
+    app-secret: your_tencent_app_secret
+    timeout: 30000
 
-  # 保险服务
-  insurance:
-    enabled: true
-    api-url: https://api.example.com/insurance
+  # 医院CRM系统API
+  hospital-crm:
+    enabled: false
+    base-url: https://api.hospital-crm.com
+    api-key: your_hospital_crm_api_key
+    timeout: 30000
+
+  # 国家医保平台API
+  national-insurance:
+    enabled: false
+    base-url: https://api.national-medical-insurance.gov.cn
+    app-id: your_national_insurance_app_id
+    app-secret: your_national_insurance_app_secret
+    timeout: 30000
+
+  # 地方医保API
+  local-insurance:
+    enabled: false
+    base-url: https://api.local-medical-insurance.gov.cn
+    api-key: your_local_insurance_api_key
+    region-code: 110000  # 地区代码，如：110000-北京
+    timeout: 30000
 
 # 日志配置
 logging:
