@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personhealth.mapper.UserProfileMapper">
+
+    <resultMap id="BaseResultMap" type="com.personhealth.entity.UserProfile">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="real_name" property="realName"/>
+        <result column="id_card_number" property="idCardNumber"/>
+        <result column="id_card_front_photo" property="idCardFrontPhoto"/>
+        <result column="id_card_back_photo" property="idCardBackPhoto"/>
+        <result column="gender" property="gender"/>
+        <result column="birthday" property="birthday"/>
+        <result column="nation" property="nation"/>
+        <result column="address" property="address"/>
+        <result column="emergency_contact_name" property="emergencyContactName"/>
+        <result column="emergency_contact_phone" property="emergencyContactPhone"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, real_name, id_card_number, id_card_front_photo, id_card_back_photo,
+        gender, birthday, nation, address, emergency_contact_name, emergency_contact_phone,
+        create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user_profile
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user_profile
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findByIdCardNumber" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user_profile
+        WHERE id_card_number = #{idCardNumber}
+    </select>
+
+    <insert id="insert" parameterType="com.personhealth.entity.UserProfile" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_profile (
+            user_id, real_name, id_card_number, id_card_front_photo, id_card_back_photo,
+            gender, birthday, nation, address, emergency_contact_name, emergency_contact_phone,
+            create_time, update_time
+        )
+        VALUES (
+            #{userId}, #{realName}, #{idCardNumber}, #{idCardFrontPhoto}, #{idCardBackPhoto},
+            #{gender}, #{birthday}, #{nation}, #{address}, #{emergencyContactName}, #{emergencyContactPhone},
+            NOW(), NOW()
+        )
+    </insert>
+
+    <update id="update" parameterType="com.personhealth.entity.UserProfile">
+        UPDATE user_profile
+        <set>
+            <if test="realName != null">real_name = #{realName},</if>
+            <if test="idCardNumber != null">id_card_number = #{idCardNumber},</if>
+            <if test="idCardFrontPhoto != null">id_card_front_photo = #{idCardFrontPhoto},</if>
+            <if test="idCardBackPhoto != null">id_card_back_photo = #{idCardBackPhoto},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="nation != null">nation = #{nation},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="emergencyContactName != null">emergency_contact_name = #{emergencyContactName},</if>
+            <if test="emergencyContactPhone != null">emergency_contact_phone = #{emergencyContactPhone},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

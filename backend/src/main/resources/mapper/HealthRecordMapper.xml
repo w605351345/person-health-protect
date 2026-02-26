@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personhealth.mapper.HealthRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.personhealth.entity.HealthRecord">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="weight" property="weight"/>
+        <result column="height" property="height"/>
+        <result column="systolic_pressure" property="systolicPressure"/>
+        <result column="diastolic_pressure" property="diastolicPressure"/>
+        <result column="blood_sugar" property="bloodSugar"/>
+        <result column="heart_rate" property="heartRate"/>
+        <result column="blood_lipid" property="bloodLipid"/>
+        <result column="oxygen_saturation" property="oxygenSaturation"/>
+        <result column="body_temperature" property="bodyTemperature"/>
+        <result column="remark" property="remark"/>
+        <result column="record_time" property="recordTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, weight, height, systolic_pressure, diastolic_pressure,
+        blood_sugar, heart_rate, blood_lipid, oxygen_saturation, body_temperature,
+        remark, record_time, create_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM health_record
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM health_record
+        WHERE user_id = #{userId}
+        ORDER BY record_time DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findByUserIdAndTimeRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM health_record
+        WHERE user_id = #{userId}
+        <if test="startDate != null">
+            AND record_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND record_time &lt;= #{endDate}
+        </if>
+        ORDER BY record_time DESC
+    </select>
+
+    <select id="findRecent" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM health_record
+        WHERE user_id = #{userId}
+        ORDER BY record_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.personhealth.entity.HealthRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO health_record (
+            user_id, weight, height, systolic_pressure, diastolic_pressure,
+            blood_sugar, heart_rate, blood_lipid, oxygen_saturation, body_temperature,
+            remark, record_time, create_time
+        )
+        VALUES (
+            #{userId}, #{weight}, #{height}, #{systolicPressure}, #{diastolicPressure},
+            #{bloodSugar}, #{heartRate}, #{bloodLipid}, #{oxygenSaturation}, #{bodyTemperature},
+            #{remark}, #{recordTime}, NOW()
+        )
+    </insert>
+
+    <update id="update" parameterType="com.personhealth.entity.HealthRecord">
+        UPDATE health_record
+        <set>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="systolicPressure != null">systolic_pressure = #{systolicPressure},</if>
+            <if test="diastolicPressure != null">diastolic_pressure = #{diastolicPressure},</if>
+            <if test="bloodSugar != null">blood_sugar = #{bloodSugar},</if>
+            <if test="heartRate != null">heart_rate = #{heartRate},</if>
+            <if test="bloodLipid != null">blood_lipid = #{bloodLipid},</if>
+            <if test="oxygenSaturation != null">oxygen_saturation = #{oxygenSaturation},</if>
+            <if test="bodyTemperature != null">body_temperature = #{bodyTemperature},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="recordTime != null">record_time = #{recordTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM health_record
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
