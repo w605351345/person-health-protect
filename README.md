@@ -114,10 +114,13 @@ person-health-protect/
 │   └── data.sql                 # 初始化数据
 │
 ├── docs/                        # 项目文档
-│   ├── API.md                   # API 文档
 │   ├── DEPLOYMENT.md            # 部署指南
-│   └── DESIGN.md                # 设计文档
+│   ├── USAGE.md                 # 使用文档
+│   ├── TESTING.md               # 测试流程文档
+│   └── PAGES.md                 # 页面设计文档
 │
+├── QUICKSTART.md                # 快速启动指南
+├── CHANGELOG.md                 # 版本更新日志
 └── README.md                    # 本文件
 ```
 
@@ -213,17 +216,21 @@ npm run preview
 
 ### 医疗记录
 - `GET /api/medical/visits` - 就医记录
+- `GET /api/medical/visits/insurance` - 从医保服务查询
+- `GET /api/medical/visits/hospital` - 从医院系统查询
 - `GET /api/medical/history` - 既往病史
 - `GET /api/medical/medications` - 用药记录
-- `GET /api/medical/reports` - 检查报告
+- `POST /api/medical/sync` - 同步医疗记录
 
 ### 保险服务
 - `GET /api/insurance/products` - 保险产品列表
 - `GET /api/insurance/recommend` - 智能推荐
+- `GET /api/insurance/filter` - 过滤保险产品
 - `GET /api/insurance/my-policies` - 我的保单
 - `GET /api/insurance/detail/{id}` - 保险详情
+- `GET /api/insurance/purchase/{id}` - 跳转购买
 
-详细 API 文档：[API.md](docs/API.md)
+**API 文档**：启动后访问 http://localhost:8080/api/swagger-ui.html 查看 Swagger UI
 
 ## 🗄️ 数据库设计
 
