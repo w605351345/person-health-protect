@@ -1,0 +1,128 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "家庭健康档案"
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "个人档案"
+      }
+    },
+    {
+      "path": "pages/health/health",
+      "style": {
+        "navigationBarTitleText": "健康数据"
+      }
+    },
+    {
+      "path": "pages/health/record",
+      "style": {
+        "navigationBarTitleText": "录入健康指标"
+      }
+    },
+    {
+      "path": "pages/health/trends",
+      "style": {
+        "navigationBarTitleText": "健康趋势"
+      }
+    },
+    {
+      "path": "pages/medical/medical",
+      "style": {
+        "navigationBarTitleText": "医疗记录"
+      }
+    },
+    {
+      "path": "pages/insurance/insurance",
+      "style": {
+        "navigationBarTitleText": "保险服务"
+      }
+    },
+    {
+      "path": "pages/insurance/products",
+      "style": {
+        "navigationBarTitleText": "保险产品"
+      }
+    },
+    {
+      "path": "pages/insurance/recommend",
+      "style": {
+        "navigationBarTitleText": "智能推荐"
+      }
+    },
+    {
+      "path": "pages/insurance/mypolicies",
+      "style": {
+        "navigationBarTitleText": "我的保单"
+      }
+    },
+    {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "家庭健康档案",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007AFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/health/health",
+        "iconPath": "static/tabbar/health.png",
+        "selectedIconPath": "static/tabbar/health-active.png",
+        "text": "健康"
+      },
+      {
+        "pagePath": "pages/medical/medical",
+        "iconPath": "static/tabbar/medical.png",
+        "selectedIconPath": "static/tabbar/medical-active.png",
+        "text": "医疗"
+      },
+      {
+        "pagePath": "pages/insurance/insurance",
+        "iconPath": "static/tabbar/insurance.png",
+        "selectedIconPath": "static/tabbar/insurance-active.png",
+        "text": "保险"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "iconPath": "static/tabbar/mine.png",
+        "selectedIconPath": "static/tabbar/mine-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "uniIdRouter": {}
+}

@@ -1,0 +1,66 @@
+# 编译输出
+backend/target/
+frontend/mobile/dist/
+frontend/mobile/unpackage/
+frontend/pc/dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 日志
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*~
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 敏感配置
+application-local.yml
+application-prod.yml
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# UniApp
+.hbuilderx/
+
+# 数据库
+*.sql.backup
+*.db
+*.sqlite
+
+# 备份文件
+*.backup
+*.old
+*.bak
+
+# 压缩包
+*.tar.gz
+*.zip
+*.rar
