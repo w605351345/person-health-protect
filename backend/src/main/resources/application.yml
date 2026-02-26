@@ -1,3 +1,8 @@
+# ========================================
+# 家庭健康档案系统 - 应用配置文件
+# 版本：1.0.0
+# ========================================
+
 spring:
   application:
     name: person-health-protect
@@ -69,61 +74,104 @@ file:
   max-size: 10485760  # 10MB
   allowed-types: image/jpeg,image/png,image/jpg
 
-# 身份证识别配置
-idcard:
-  enable-ocr: true
-  ocr-api: https://api.example.com/ocr
-
-# 第三方服务配置
+# 外部API配置
+# ========================================
+# 重要说明：
+# 1. 以下API地址为示例地址，实际使用时请填写真实API地址
+# 2. 启用API时，请将对应的 enabled 设置为 true
+# 3. API 密钥请妥善保管，不要提交到代码仓库
+# ========================================
 external:
-  # 摩熵医药API
-  moneng:
-    enabled: false
-    base-url: https://api.moneng.com
-    api-key: your_moneng_api_key
-    api-secret: your_moneng_api_secret
-    timeout: 30000
+  api:
+    # 摩熵医药API配置
+    moneng:
+      enabled: false  # 是否启用摩熵医药API
+      base-url: https://api.moneng.com  # 摩熵医药API基础地址（示例地址，请填写真实地址）
+      api-key: your_moneng_api_key  # 摩熵医药API Key
+      api-secret: your_moneng_api_secret  # 摩熵医药API Secret
+      timeout: 30000  # 请求超时时间（毫秒）
 
-  # 腾讯医疗健康API
-  tencent-health:
-    enabled: false
-    base-url: https://api.tencent.com/medical
-    app-key: your_tencent_app_key
-    app-secret: your_tencent_app_secret
-    timeout: 30000
+    # 腾讯医疗健康API配置
+    tencent-health:
+      enabled: false  # 是否启用腾讯医疗健康API
+      base-url: https://api.tencent.com/medical  # 腾讯医疗健康API基础地址（示例地址，请填写真实地址）
+      app-key: your_tencent_app_key  # 腾讯医疗健康 App Key
+      app-secret: your_tencent_app_secret  # 腾讯医疗健康 App Secret
+      timeout: 30000  # 请求超时时间（毫秒）
 
-  # 医院CRM系统API
-  hospital-crm:
-    enabled: false
-    base-url: https://api.hospital-crm.com
-    api-key: your_hospital_crm_api_key
-    timeout: 30000
+    # 医院CRM系统API配置
+    hospital-crm:
+      enabled: false  # 是否启用医院CRM系统API
+      base-url: https://api.hospital-crm.com  # 医院CRM系统API基础地址（示例地址，请填写真实地址）
+      api-key: your_hospital_crm_api_key  # 医院CRM系统 API Key
+      timeout: 30000  # 请求超时时间（毫秒）
 
-  # 国家医保平台API
-  national-insurance:
-    enabled: false
-    base-url: https://api.national-medical-insurance.gov.cn
-    app-id: your_national_insurance_app_id
-    app-secret: your_national_insurance_app_secret
-    timeout: 30000
+    # 国家医保平台API配置
+    national-insurance:
+      enabled: false  # 是否启用国家医保平台API
+      base-url: https://api.national-medical-insurance.gov.cn  # 国家医保平台API基础地址（示例地址，请填写真实地址）
+      app-id: your_national_insurance_app_id  # 国家医保平台 App ID
+      app-secret: your_national_insurance_app_secret  # 国家医保平台 App Secret
+      timeout: 30000  # 请求超时时间（毫秒）
 
-  # 地方医保API
-  local-insurance:
-    enabled: false
-    base-url: https://api.local-medical-insurance.gov.cn
-    api-key: your_local_insurance_api_key
-    region-code: 110000  # 地区代码，如：110000-北京
-    timeout: 30000
+    # 地方医保API配置
+    local-insurance:
+      enabled: false  # 是否启用地方医保API
+      base-url: https://api.local-medical-insurance.gov.cn  # 地方医保API基础地址（示例地址，请填写真实地址）
+      api-key: your_local_insurance_api_key  # 地方医保 API Key
+      region-code: 110000  # 地区代码，如：110000-北京，310000-上海
+      timeout: 30000  # 请求超时时间（毫秒）
+
+# API连通性检查配置
+# ========================================
+# 可以通过 /api/external-api/health-check 接口检查所有API的连通性
+# ========================================
+external:
+  api:
+    # 是否自动检查API连通性（每次启动时）
+    auto-health-check: false
+
+    # API连通性检查间隔（秒）
+    health-check-interval: 300  # 5分钟
+
+    # API连通性检查超时时间（秒）
+    health-check-timeout: 30
+
+# 短信配置（用于登录验证）
+sms:
+  enabled: true
+  provider: aliyun  # 短信服务提供商：aliyun, tencent, netease
+  access-key-id: your_access_key  # Access Key ID
+  access-key-secret: your_access_secret  # Access Key Secret
+  sign-name: 您的签名  # 短信签名
+  template-code: your_template_code  # 短信模板代码
+
+# 缓存配置
+cache:
+  # 用户信息缓存时间（秒）
+  user-info: 3600
+
+  # 健康数据缓存时间（秒）
+  health-data: 1800
+
+  # 保险产品缓存时间（秒）
+  insurance-products: 7200
+
+  # 医疗记录缓存时间（秒）
+  medical-records: 1800
 
 # 日志配置
 logging:
   level:
     root: INFO
     com.personhealth: DEBUG
+    com.personhealth.service.external: DEBUG  # 外部API服务日志
     org.springframework.web: INFO
     org.springframework.security: INFO
+    org.springframework.web.client.RestTemplate: DEBUG  # RestTemplate 请求日志
   pattern:
     console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
 
 # SpringDoc 配置
 springdoc:
@@ -133,18 +181,43 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
   packages-to-scan: com.personhealth.controller
+  tags:
+    - name: external-api
+      description: 外部API管理
 
-# 缓存配置
-cache:
-  user-info: 3600      # 用户信息缓存1小时
-  health-data: 1800    # 健康数据缓存30分钟
-  insurance-products: 7200  # 保险产品缓存2小时
+# Actuator 配置（健康检查）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
 
-# 短信配置（用于登录验证）
-sms:
-  enabled: true
-  provider: aliyun
-  access-key-id: your_access_key
-  access-key-secret: your_access_secret
-  sign-name: 您的签名
-  template-code: your_template_code
+# 文档说明
+# ========================================
+# API连通性检查接口：
+# - GET /api/external-api/health-check - 检查所有API连通性
+# - GET /api/external-api/health-check/{apiName} - 检查指定API连通性
+# - GET /api/external-api/health-report - 生成连通性检查报告
+# - GET /api/external-api/config - 获取API配置信息
+# - GET /api/external-api/endpoints - 获取API地址列表
+# - POST /api/external-api/verify-url - 验证给定的URL是否可访问
+#
+# 支持的API名称：
+# - moneng（摩熵医药API）
+# - tencentHealth（腾讯医疗健康API）
+# - hospitalCrm（医院CRM系统API）
+# - nationalInsurance（国家医保平台API）
+# - localInsurance（地方医保API）
+#
+# 启用API示例：
+# external:
+#   api:
+#     moneng:
+#       enabled: true
+#       base-url: https://真实API地址.com
+#       api-key: your_real_api_key
+#       api-secret: your_real_api_secret
+# ========================================

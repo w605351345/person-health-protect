@@ -43,7 +43,7 @@ public class ExternalApiConfig {
     @Data
     public static class MonengApi {
         private Boolean enabled = false;
-        private String baseUrl = "https://api.moneng.com";
+        private String baseUrl = "https://api.moneng.com"; // 示例地址，实际使用时请填写真实API地址
         private String apiKey;
         private String apiSecret;
         private Integer timeout = 30000;
@@ -69,7 +69,7 @@ public class ExternalApiConfig {
     @Data
     public static class TencentHealth {
         private Boolean enabled = false;
-        private String baseUrl = "https://api.tencent.com/medical";
+        private String baseUrl = "https://api.tencent.com/medical"; // 示例地址，实际使用时请填写真实API地址
         private String appKey;
         private String appSecret;
         private Integer timeout = 30000;
@@ -109,7 +109,7 @@ public class ExternalApiConfig {
     @Data
     public static class HospitalCrm {
         private Boolean enabled = false;
-        private String baseUrl = "https://api.hospital-crm.com";
+        private String baseUrl = "https://api.hospital-crm.com"; // 示例地址，实际使用时请填写真实API地址
         private String apiKey;
         private Integer timeout = 30000;
 
@@ -148,7 +148,7 @@ public class ExternalApiConfig {
     @Data
     public static class NationalInsurance {
         private Boolean enabled = false;
-        private String baseUrl = "https://api.national-medical-insurance.gov.cn";
+        private String baseUrl = "https://api.national-medical-insurance.gov.cn"; // 示例地址，实际使用时请填写真实API地址
         private String appId;
         private String appSecret;
         private Integer timeout = 30000;
@@ -188,7 +188,7 @@ public class ExternalApiConfig {
     @Data
     public static class LocalInsurance {
         private Boolean enabled = false;
-        private String baseUrl = "https://api.local-medical-insurance.gov.cn";
+        private String baseUrl = "https://api.local-medical-insurance.gov.cn"; // 示例地址，实际使用时请填写真实API地址
         private String apiKey;
         private String regionCode;
         private Integer timeout = 30000;

@@ -1,29 +1,75 @@
-# 外部API对接文档
+# API 对接文档
 
 ## 📋 目录
 
 - [概述](#概述)
+- [API地址说明](#api地址说明)
 - [医院相关API对接](#医院相关api对接)
 - [医保相关API对接](#医保相关api对接)
+- [API连通性检查](#api连通性检查)
 - [配置说明](#配置说明)
-- [使用示例](#使用示例)
 - [注意事项](#注意事项)
 
 ---
 
 ## 概述
 
-本系统支持与以下权威平台进行对接：
+本系统支持与以下权威平台进行对接，所有API地址和密钥均可配置，无需修改代码。
 
-### 医院相关API
-- **摩熵医药API**：医药研发、临床诊疗、医疗器械数据查询等
-- **腾讯医疗健康API**：智慧医院服务、病历质量控制、药品信息查询等
-- **医院CRM系统API**：患者数据同步、预约挂号、检查报告查询等
+### 支持的平台
 
-### 医保相关API
-- **国家医保平台API**：医保电子凭证授权、刷脸支付、费用结算等
-- **地方医保API**：地方医保目录查询、报销政策获取等
-- **第三方医保数据API**：医保药品分类代码查询、市场需求分析等
+| 平台 | 用途 | 配置项 |
+|------|------|--------|
+| 摩熵医药API | 医保药品目录查询、药品分类代码查询 | moneng |
+| 腾讯医疗健康API | 医学术语、ICD编码、OCR病历识别、NLP医典 | tencentHealth |
+| 医院CRM系统API | 患者数据同步、预约挂号、检查报告查询 | hospitalCrm |
+| 国家医保平台API | 医保电子凭证、刷脸支付、费用结算 | nationalInsurance |
+| 地方医保API | 地方医保目录、报销政策 | localInsurance |
+
+---
+
+## API地址说明
+
+### ⚠️ 重要提示
+
+**当前配置中的所有API地址均为示例地址，不是真实可访问的地址！**
+
+### 示例地址列表
+
+| API名称 | 当前配置地址 | 说明 |
+|---------|-------------|------|
+| 摩熵医药API | `https://api.moneng.com` | **示例地址**，请填写真实API地址 |
+| 腾讯医疗健康API | `https://api.tencent.com/medical` | **示例地址**，请填写真实API地址 |
+| 医院CRM系统API | `https://api.hospital-crm.com` | **示例地址**，请填写真实API地址 |
+| 国家医保平台API | `https://api.national-medical-insurance.gov.cn` | **示例地址**，请填写真实API地址 |
+| 地方医保API | `https://api.local-medical-insurance.gov.cn` | **示例地址**，请填写真实API地址 |
+
+### 如何获取真实API地址
+
+1. **摩熵医药API**
+   - 访问：https://www.moneng.com
+   - 注册开发者账号
+   - 获取真实API地址
+
+2. **腾讯医疗健康API**
+   - 访问：https://cloud.tencent.com/product/medical
+   - 申请API服务
+   - 获取真实API地址
+
+3. **医院CRM系统API**
+   - 联系医院CRM供应商（如康策）
+   - 获取OpenAPI文档
+   - 获取真实API地址
+
+4. **国家医保平台API**
+   - 访问：https://www.nhsa.gov.cn
+   - 提交API接入申请
+   - 获取真实API地址
+
+5. **地方医保API**
+   - 联系当地医保局
+   - 了解具体申请流程
+   - 获取真实API地址
 
 ---
 
@@ -40,78 +86,49 @@
 - 医保药品目录查询
 - 药品分类代码查询
 
-#### 对接方式
+#### 对接流程
 
 1. **注册开发者账号**
-   - 访问摩熵医药开放平台官网
-   - 注册开发者账号
-   - 完成企业认证
+   ```
+   访问：https://www.moneng.com
+   注册：开发者账号
+   认证：企业认证
+   ```
 
-2. **获取API Key**
-   - 进入应用管理页面
-   - 创建新应用
-   - 获取API Key和API Secret
+2. **获取API信息**
+   ```
+   登录：开发者后台
+   创建：新应用
+   获取：API Key、API Secret、真实API地址
+   ```
 
-3. **调用接口示例**
+3. **配置系统**
+   ```yaml
+   external:
+     api:
+       moneng:
+         enabled: true
+         base-url: https://真实API地址.com  # 填写真实地址
+         api-key: your_moneng_api_key
+         api-secret: your_moneng_api_secret
+   ```
 
-```java
-// 查询医保药品目录
-@RestController
-@RequestMapping("/api/external/moneng")
-public class MonengApiController {
+#### 接口列表
 
-    @Value("${external.moneng.api-key}")
-    private String apiKey;
+| 接口名称 | 方法 | 路径 | 说明 |
+|---------|------|------|------|
+| 医保药品目录查询 | POST | /v1/drug/catalog | 查询医保药品信息 |
+| 药品分类代码查询 | POST | /v1/drug/category | 查询药品分类代码 |
 
-    @GetMapping("/drug-catalog")
-    public Map<String, Object> queryDrugCatalog(@RequestParam String drugName) {
-        RestTemplate restTemplate = new RestTemplate();
+#### 调用示例
 
-        // 构建请求参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("drugName", drugName);
-        params.put("apiKey", apiKey);
-
-        // 构建请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-API-KEY", apiKey);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
-
-        // 发送请求
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            "https://api.moneng.com/v1/drug/catalog",
-            request,
-            String.class
-        );
-
-        // 解析响应
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
-        JsonNode dataNode = rootNode.path("data");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("drugName", dataNode.path("drugName").asText());
-        result.put("dosageForm", dataNode.path("dosageForm").asText());
-        result.put("medicalInsuranceType", dataNode.path("medicalInsuranceType").asText());
-        result.put("medicalInsuranceCategory", dataNode.path("medicalInsuranceCategory").asText());
-
-        return result;
-    }
-}
-```
-
-#### 配置项
-
-```yaml
-external:
-  moneng:
-    enabled: true
-    base-url: https://api.moneng.com
-    api-key: your_moneng_api_key
-    api-secret: your_moneng_api_secret
-    timeout: 30000
+```bash
+curl -X POST "https://真实API地址.com/v1/drug/catalog" \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your_moneng_api_key" \
+  -d '{
+    "drugName": "阿司匹林"
+  }'
 ```
 
 ---
@@ -127,77 +144,45 @@ external:
 - OCR和NLP
 - 医典
 
-#### 对接方式
+#### 对接流程
 
 1. **申请服务**
-   - 登录腾讯云官网
-   - 申请医疗健康API服务
-   - 获取访问密钥（AppKey和AppSecret）
-   - 配置权限范围
+   ```
+   访问：https://cloud.tencent.com
+   申请：医疗健康API服务
+   获取：访问密钥（AppKey、AppSecret）、真实API地址
+   ```
 
-2. **调用接口示例**
+2. **配置系统**
+   ```yaml
+   external:
+     api:
+       tencent-health:
+         enabled: true
+         base-url: https://真实API地址.com/medical  # 填写真实地址
+         app-key: your_tencent_app_key
+         app-secret: your_tencent_app_secret
+   ```
 
-```java
-// OCR病历识别
-@RestController
-@RequestMapping("/api/external/tencent")
-public class TencentHealthApiController {
+#### 接口列表
 
-    @Value("${external.tencent-health.app-key}")
-    private String appKey;
+| 接口名称 | 方法 | 路径 | 说明 |
+|---------|------|------|------|
+| 医学术语查询 | POST | /v1/term/query | 查询医学术语 |
+| ICD编码查询 | POST | /v1/icd/query | 查询ICD编码 |
+| OCR病历识别 | POST | /v1/ocr/medical-record | 识别OCR病历 |
+| NLP医典查询 | POST | /v1/nlp/dict | 查询NLP医典 |
 
-    @Value("${external.tencent-health.app-secret}")
-    private String appSecret;
+#### 调用示例
 
-    @PostMapping("/ocr/medical-record")
-    public Map<String, Object> ocrMedicalRecord(@RequestParam String imageUrl) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 构建请求参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("imageUrl", imageUrl);
-
-        // 构建请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-App-Key", appKey);
-        headers.set("X-App-Secret", appSecret);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
-
-        // 发送请求
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            "https://api.tencent.com/medical/v1/ocr/medical-record",
-            request,
-            String.class
-        );
-
-        // 解析响应
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
-        JsonNode dataNode = rootNode.path("data");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("patientName", dataNode.path("patientName").asText());
-        result.put("diagnosis", dataNode.path("diagnosis").asText());
-        result.put("prescription", dataNode.path("prescription").asText());
-        result.put("hospitalName", dataNode.path("hospitalName").asText());
-
-        return result;
-    }
-}
-```
-
-#### 配置项
-
-```yaml
-external:
-  tencent-health:
-    enabled: true
-    base-url: https://api.tencent.com/medical
-    app-key: your_tencent_app_key
-    app-secret: your_tencent_app_secret
-    timeout: 30000
+```bash
+curl -X POST "https://真实API地址.com/medical/v1/ocr/medical-record" \
+  -H "Content-Type: application/json" \
+  -H "X-App-Key: your_tencent_app_key" \
+  -H "X-App-Secret: your_tencent_app_secret" \
+  -d '{
+    "imageUrl": "https://example.com/medical-record.jpg"
+  }'
 ```
 
 ---
@@ -207,82 +192,51 @@ external:
 #### 对接场景
 患者数据同步、预约挂号、检查报告查询等
 
-#### 典型案例
-康策医院CRM支持与HIS、LIS、PACS等系统无缝对接
-
-#### 对接方式
+#### 对接流程
 
 1. **联系供应商**
-   - 联系医院CRM供应商（如康策）
-   - 获取OpenAPI接口文档
-   - 签署合作协议
+   ```
+   联系：医院CRM供应商（如康策）
+   获取：OpenAPI接口文档、真实API地址
+   签署：合作协议
+   ```
 
 2. **获取Token**
-   - 调用登录接口获取Token
-   - Token用于后续数据访问
+   ```
+   调用：登录接口
+   获取：访问Token
+   使用：Token访问后续接口
+   ```
 
-3. **调用接口示例**
+3. **配置系统**
+   ```yaml
+   external:
+     api:
+       hospital-crm:
+         enabled: true
+         base-url: https://真实API地址.com  # 填写真实地址
+         api-key: your_hospital_crm_api_key
+   ```
 
-```java
-// 查询检查报告
-@RestController
-@RequestMapping("/api/external/hospital-crm")
-public class HospitalCrmApiController {
+#### 接口列表
 
-    @Value("${external.hospital-crm.api-key}")
-    private String apiKey;
+| 接口名称 | 方法 | 路径 | 说明 |
+|---------|------|------|------|
+| 患者数据同步 | POST | /v1/patient/sync | 同步患者数据 |
+| 预约挂号 | POST | /v1/appointment/register | 预约挂号 |
+| 检查报告查询 | POST | /v1/report/query | 查询检查报告 |
+| 实时排班查询 | POST | /v1/schedule/query | 查询实时排班 |
 
-    @PostMapping("/report/query")
-    public Map<String, Object> queryReport(
-            @RequestParam String patientId,
-            @RequestParam String reportType) {
+#### 调用示例
 
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 构建请求参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("patientId", patientId);
-        params.put("reportType", reportType);
-
-        // 构建请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-API-KEY", apiKey);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
-
-        // 发送请求
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            "https://api.hospital-crm.com/v1/report/query",
-            request,
-            String.class
-        );
-
-        // 解析响应
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
-        JsonNode dataNode = rootNode.path("data");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("reportId", dataNode.path("reportId").asText());
-        result.put("reportName", dataNode.path("reportName").asText());
-        result.put("reportDate", dataNode.path("reportDate").asText());
-        result.put("reportResult", dataNode.path("reportResult").asText());
-
-        return result;
-    }
-}
-```
-
-#### 配置项
-
-```yaml
-external:
-  hospital-crm:
-    enabled: true
-    base-url: https://api.hospital-crm.com
-    api-key: your_hospital_crm_api_key
-    timeout: 30000
+```bash
+curl -X POST "https://真实API地址.com/v1/patient/sync" \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your_hospital_crm_api_key" \
+  -d '{
+    "idCardNumber": "110101199001011234",
+    "phone": "13800138000"
+  }'
 ```
 
 ---
@@ -294,138 +248,96 @@ external:
 #### 对接场景
 医保电子凭证授权、刷脸支付、费用结算等
 
-#### 前置准备
-- 拥有互联网医院主体公众号/小程序
-- 完成线上问诊和交易系统开发
+#### 对接流程
 
-#### 申请流程
+1. **前置准备**
+   ```
+   拥有：互联网医院主体公众号/小程序
+   完成：线上问诊和交易系统开发
+   ```
 
-1. **提交申请**
-   - 进入国家医保服务平台官网
-   - 提交API接入申请
-   - 填写申请表格，提供企业资质、技术方案等材料
+2. **申请流程**
+   ```
+   访问：国家医保服务平台官网
+   提交：API接入申请
+   填写：企业资质、技术方案等材料
+   等待：审核通过
+   获取：生产环境权限、真实API地址
+   ```
 
-2. **审核通过**
-   - 完成技术对接和测试
-   - 获取生产环境权限
+3. **配置系统**
+   ```yaml
+   external:
+     api:
+       national-insurance:
+         enabled: true
+         base-url: https://真实API地址.gov.cn  # 填写真实地址
+         app-id: your_national_insurance_app_id
+         app-secret: your_national_insurance_app_secret
+   ```
 
-#### 技术实现
+#### 接口列表
 
-1. **使用核心动态链接库**
-   - 使用NationECCode.dll等核心库
-   - 通过C#等语言调用封装好的函数
-   - 如NationEcTrans
-
-2. **组装业务报文**
-   - 处理加密和签名
-   - 实现刷脸支付、参保人信息查询等功能
+| 接口名称 | 方法 | 路径 | 说明 |
+|---------|------|------|------|
+| 医保电子凭证授权 | POST | /v1/ecode/auth | 获取医保电子凭证 |
+| 刷脸支付 | POST | /v1/payment/face | 刷脸支付 |
+| 费用结算 | POST | /v1/settlement | 费用结算 |
+| 参保人信息查询 | POST | /v1/insured/info | 查询参保人信息 |
 
 #### 调用示例
 
-```java
-// 医保电子凭证授权
-@RestController
-@RequestMapping("/api/external/national-insurance")
-public class NationalInsuranceApiController {
-
-    @Value("${external.national-insurance.app-id}")
-    private String appId;
-
-    @Value("${external.national-insurance.app-secret}")
-    private String appSecret;
-
-    @PostMapping("/ecode/auth")
-    public Map<String, Object> getEcodeAuth(
-            @RequestParam String idCardNumber,
-            @RequestParam String phone) {
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 构建请求参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("appId", appId);
-        params.put("idCardNumber", idCardNumber);
-        params.put("phone", phone);
-        params.put("timestamp", System.currentTimeMillis());
-
-        // 生成签名
-        String signature = generateSignature(params, appSecret);
-
-        // 构建请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-App-Id", appId);
-        headers.set("X-App-Secret", signature);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
-
-        // 发送请求
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            "https://api.national-medical-insurance.gov.cn/v1/ecode/auth",
-            request,
-            String.class
-        );
-
-        // 解析响应
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
-        JsonNode dataNode = rootNode.path("data");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("ecodeToken", dataNode.path("ecodeToken").asText());
-        result.put("ecodeUrl", dataNode.path("ecodeUrl").asText());
-        result.put("expireTime", dataNode.path("expireTime").asLong());
-
-        return result;
-    }
-
-    /**
-     * 生成签名
-     */
-    private String generateSignature(Map<String, Object> params, String appSecret) {
-        TreeMap<String, Object> sortedParams = new TreeMap<>(params);
-        StringBuilder sb = new StringBuilder();
-
-        for (Map.Entry<String, Object> entry : sortedParams.entrySet()) {
-            if (sb.length() > 0) {
-                sb.append("&");
-            }
-            sb.append(entry.getKey()).append("=").append(entry.getValue());
-        }
-
-        sb.append("&key=").append(appSecret);
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] bytes = md.digest(sb.toString().getBytes("UTF-8"));
-            StringBuilder hexString = new StringBuilder();
-
-            for (byte b : bytes) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-
-            return hexString.toString().toUpperCase();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-}
+```bash
+curl -X POST "https://真实API地址.gov.cn/v1/ecode/auth" \
+  -H "Content-Type: application/json" \
+  -H "X-App-Id: your_national_insurance_app_id" \
+  -H "X-App-Secret: [生成签名]" \
+  -d '{
+    "appId": "your_national_insurance_app_id",
+    "idCardNumber": "110101199001011234",
+    "phone": "13800138000",
+    "timestamp": 1640780800000
+  }'
 ```
 
-#### 配置项
+#### 签名生成
 
-```yaml
-external:
-  national-insurance:
-    enabled: true
-    base-url: https://api.national-medical-insurance.gov.cn
-    app-id: your_national_insurance_app_id
-    app-secret: your_national_insurance_app_secret
-    timeout: 30000
+国家医保平台API需要MD5签名：
+
+```java
+public String generateSignature(Map<String, Object> params, String appSecret) {
+    // 按参数名排序
+    TreeMap<String, Object> sortedParams = new TreeMap<>(params);
+
+    // 拼接参数
+    StringBuilder sb = new StringBuilder();
+    for (Map.Entry<String, Object> entry : sortedParams.entrySet()) {
+        if (sb.length() > 0) {
+            sb.append("&");
+        }
+        sb.append(entry.getKey()).append("=").append(entry.getValue());
+    }
+
+    // 添加密钥
+    sb.append("&key=").append(appSecret);
+
+    // MD5加密
+    try {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] bytes = md.digest(sb.toString().getBytes("UTF-8"));
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString().toUpperCase();
+    } catch (Exception e) {
+        return "";
+    }
+}
 ```
 
 ---
@@ -435,87 +347,46 @@ external:
 #### 对接场景
 地方医保目录查询、报销政策获取等
 
-#### 对接方式
+#### 对接流程
 
 1. **联系当地医保局**
-   - 直接联系所在地医保局或相关机构
-   - 了解具体申请流程
+   ```
+   联系：所在地医保局或相关机构
+   了解：具体申请流程
+   提交：企业资质、技术文档等材料
+   等待：审核通过
+   获取：API访问权限、真实API地址
+   ```
 
-2. **提交材料**
-   - 企业资质
-   - 技术文档
-   - 完成审核后获取API访问权限
+2. **配置系统**
+   ```yaml
+   external:
+     api:
+       local-insurance:
+         enabled: true
+         base-url: https://真实API地址.gov.cn  # 填写真实地址
+         api-key: your_local_insurance_api_key
+         region-code: 110000  # 地区代码
+   ```
 
-3. **调用接口**
-   - 根据地方医保平台提供的接口文档
-   - 调用相应接口实现功能
+#### 接口列表
+
+| 接口名称 | 方法 | 路径 | 说明 |
+|---------|------|------|------|
+| 地方医保目录查询 | POST | /v1/catalog/local | 查询地方医保目录 |
+| 报销政策获取 | POST | /v1/policy/query | 查询报销政策 |
+| 报销比例查询 | POST | /v1/reimbursement/rate | 查询报销比例 |
 
 #### 调用示例
 
-```java
-// 查询报销政策
-@RestController
-@RequestMapping("/api/external/local-insurance")
-public class LocalInsuranceApiController {
-
-    @Value("${external.local-insurance.api-key}")
-    private String apiKey;
-
-    @Value("${external.local-insurance.region-code}")
-    private String regionCode;
-
-    @PostMapping("/policy/query")
-    public Map<String, Object> queryReimbursementPolicy(
-            @RequestParam String diseaseType) {
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 构建请求参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("regionCode", regionCode);
-        params.put("diseaseType", diseaseType);
-        params.put("apiKey", apiKey);
-
-        // 构建请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-API-KEY", apiKey);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
-
-        // 发送请求
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            "https://api.local-medical-insurance.gov.cn/v1/policy/query",
-            request,
-            String.class
-        );
-
-        // 解析响应
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
-        JsonNode dataNode = rootNode.path("data");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("policyName", dataNode.path("policyName").asText());
-        result.put("reimbursementRatio", dataNode.path("reimbursementRatio").asDouble());
-        result.put("limitAmount", dataNode.path("limitAmount").asDouble());
-        result.put("description", dataNode.path("description").asText());
-
-        return result;
-    }
-}
-```
-
-#### 配置项
-
-```yaml
-external:
-  local-insurance:
-    enabled: true
-    base-url: https://api.local-medical-insurance.gov.cn
-    api-key: your_local_insurance_api_key
-    region-code: 110000  # 地区代码，如：110000-北京
-    timeout: 30000
+```bash
+curl -X POST "https://真实API地址.gov.cn/v1/catalog/local" \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your_local_insurance_api_key" \
+  -d '{
+    "regionCode": "110000",
+    "keyword": "药品"
+  }'
 ```
 
 ---
@@ -525,68 +396,129 @@ external:
 #### 对接场景
 医保药品分类代码查询、市场需求分析等
 
-#### 典型案例
-摩熵数科开放平台提供医保药品目录查询API，收录国家及地方医保目录数据
-
-#### 对接方式
+#### 对接流程
 
 1. **注册平台账号**
-   - 注册摩熵数科开放平台账号
-   - 申请医保药品查询API权限
+   ```
+   访问：摩熵数科开放平台
+   注册：开发者账号
+   申请：医保药品查询API权限
+   获取：真实API地址
+   ```
 
-2. **调用接口**
-   - 根据文档调用接口
-   - 通过药品通用名称获取医保类别、执行状态等详细信息
+2. **配置系统**
+   ```yaml
+   external:
+     api:
+       moneng:
+         enabled: true
+         base-url: https://真实API地址.com  # 填写真实地址
+         api-key: your_moneng_api_key
+   ```
+
+#### 接口列表
+
+| 接口名称 | 方法 | 路径 | 说明 |
+|---------|------|------|------|
+| 医保药品分类代码查询 | POST | /v1/drug/category | 查询医保药品分类 |
 
 #### 调用示例
 
-```java
-// 查询医保药品分类代码
-@RestController
-@RequestMapping("/api/external/moneng/insurance")
-public class MonengInsuranceApiController {
+```bash
+curl -X POST "https://真实API地址.com/v1/drug/category" \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your_moneng_api_key" \
+  -d '{
+    "categoryName": "抗生素"
+  }'
+```
 
-    @Value("${external.moneng.api-key}")
-    private String apiKey;
+---
 
-    @GetMapping("/drug-category")
-    public Map<String, Object> queryDrugCategory(@RequestParam String categoryName) {
-        RestTemplate restTemplate = new RestTemplate();
+## API连通性检查
 
-        // 构建请求参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("categoryName", categoryName);
-        params.put("apiKey", apiKey);
+系统提供了完整的API连通性检查功能：
 
-        // 构建请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-API-KEY", apiKey);
+### 检查所有API
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
+```bash
+GET /api/external-api/health-check
+```
 
-        // 发送请求
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            "https://api.moneng.com/v1/drug/category",
-            request,
-            String.class
-        );
+返回所有已启用API的连通性状态：
 
-        // 解析响应
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
-        JsonNode dataNode = rootNode.path("data");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("categoryCode", dataNode.path("categoryCode").asText());
-        result.put("categoryName", dataNode.path("categoryName").asText());
-        result.put("insuranceCategory", dataNode.path("insuranceCategory").asText());
-        result.put("executionStatus", dataNode.path("executionStatus").asText());
-
-        return result;
+```json
+{
+  "code": 200,
+  "message": "操作成功",
+  "data": {
+    "moneng": {
+      "status": "error",
+      "message": "摩熵医药API连接失败：Connection refused",
+      "url": "https://api.moneng.com"
+    },
+    "tencentHealth": {
+      "status": "error",
+      "message": "腾讯医疗健康API连接失败：Unknown host",
+      "url": "https://api.tencent.com/medical"
+    },
+    "hospitalCrm": {
+      "status": "error",
+      "message": "医院CRM系统API连接失败：Connection timed out",
+      "url": "https://api.hospital-crm.com"
+    },
+    "nationalInsurance": {
+      "status": "error",
+      "message": "国家医保平台API连接失败：No route to host",
+      "url": "https://api.national-medical-insurance.gov.cn"
+    },
+    "localInsurance": {
+      "status": "error",
+      "message": "地方医保API连接失败：Connection refused",
+      "url": "https://api.local-medical-insurance.gov.cn"
     }
+  }
 }
 ```
+
+### 检查指定API
+
+```bash
+GET /api/external-api/health-check/{apiName}
+```
+
+支持的API名称：
+- `moneng` - 摩熵医药API
+- `tencentHealth` - 腾讯医疗健康API
+- `hospitalCrm` - 医院CRM系统API
+- `nationalInsurance` - 国家医保平台API
+- `localInsurance` - 地方医保API
+
+### 生成检查报告
+
+```bash
+GET /api/external-api/health-report
+```
+
+生成完整的API连通性检查报告，包括：
+- 所有API的连通性状态
+- 功能接口测试结果
+- 详细的错误信息
+- 配置建议
+
+### 验证API地址
+
+```bash
+POST /api/external-api/verify-url
+
+Content-Type: application/json
+
+{
+  "url": "https://real-api-address.com"
+}
+```
+
+验证给定的URL是否可访问。
 
 ---
 
@@ -598,16 +530,31 @@ public class MonengInsuranceApiController {
 
 ```yaml
 external:
-  moneng:
-    enabled: true  # 启用摩熵医药API
-  tencent-health:
-    enabled: true  # 启用腾讯医疗健康API
-  hospital-crm:
-    enabled: true  # 启用医院CRM系统API
-  national-insurance:
-    enabled: true  # 启用国家医保平台API
-  local-insurance:
-    enabled: true  # 启用地方医保API
+  api:
+    moneng:
+      enabled: true  # 启用摩熵医药API
+    tencent-health:
+      enabled: true  # 启用腾讯医疗健康API
+    hospital-crm:
+      enabled: true  # 启用医院CRM系统API
+    national-insurance:
+      enabled: true  # 启用国家医保平台API
+    local-insurance:
+      enabled: true  # 启用地方医保API
+```
+
+### 配置真实API地址
+
+在 `application.yml` 中将 `base-url` 修改为真实API地址：
+
+```yaml
+external:
+  api:
+    moneng:
+      enabled: true
+      base-url: https://真实摩熵API地址.com  # 修改为真实地址
+      api-key: your_moneng_api_key
+      api-secret: your_moneng_api_secret
 ```
 
 ### 配置API密钥
@@ -616,82 +563,57 @@ external:
 
 ```yaml
 external:
-  moneng:
-    api-key: your_moneng_api_key
-    api-secret: your_moneng_api_secret
-  tencent-health:
-    app-key: your_tencent_app_key
-    app-secret: your_tencent_app_secret
-  hospital-crm:
-    api-key: your_hospital_crm_api_key
-  national-insurance:
-    app-id: your_national_insurance_app_id
-    app-secret: your_national_insurance_app_secret
-  local-insurance:
-    api-key: your_local_insurance_api_key
-    region-code: 110000
+  api:
+    moneng:
+      enabled: true
+      api-key: your_moneng_api_key  # 填写真实的API Key
+      api-secret: your_moneng_api_secret  # 填写真实的API Secret
 ```
 
----
+### API地址配置说明
 
-## 使用示例
-
-### 在医疗记录服务中使用
-
-系统已集成外部API对接服务，可在 `MedicalServiceImpl` 中使用：
-
-```java
-@Service
-public class MedicalServiceImpl implements MedicalService {
-
-    private final InsuranceApiServiceImpl insuranceApiService;
-    private final HospitalApiServiceImpl hospitalApiService;
-
-    @Override
-    public List<MedicalVisit> getVisitsFromInsurance() {
-        // 自动从医保服务获取就医记录
-        return insuranceApiService.fetchMedicalVisitsFromInsurance(idCardNumber);
-    }
-
-    @Override
-    public List<MedicalVisit> getVisitsFromHospital() {
-        // 自动从医院CRM系统获取检查报告
-        var reportData = hospitalApiService.queryReportFromCrm(patientId, "all");
-        // 构建就医记录
-        return visits;
-    }
-}
-```
+| 配置项 | 说明 | 示例 |
+|--------|------|------|
+| `base-url` | API基础地址 | `https://api.moneng.com`（示例地址） |
+| `api-key` | API访问密钥 | `your_moneng_api_key` |
+| `app-key` | 腾讯/国家医保的App Key | `your_tencent_app_key` |
+| `app-secret` | 腾讯/国家医保的App Secret | `your_tencent_app_secret` |
+| `app-id` | 国家医保的App ID | `your_national_insurance_app_id` |
+| `region-code` | 地方医保的地区代码 | `110000`（北京） |
 
 ---
 
 ## 注意事项
 
-### 安全合规
-- ⚠️ 遵守《数据安全法》《个人信息保护法》
-- ⚠️ 禁止传输敏感信息
-- ⚠️ 使用HTTPS加密传输
+### ⚠️ 安全合规
+- 遵守《数据安全法》《个人信息保护法》
+- 禁止传输敏感信息（身份证号、手机号等）
+- 使用HTTPS加密传输
+- 定期更新API密钥
 
-### 性能优化
-- ⚠️ 采用异步调用降低延迟
-- ⚠️ 使用缓存机制减少重复请求
-- ⚠️ 控制并发请求数量
+### ⚠️ 性能优化
+- 采用异步调用降低延迟
+- 使用缓存机制减少重复请求
+- 控制并发请求数量
+- 设置合理的超时时间
 
-### 监控维护
-- ⚠️ 实时监控API调用成功率
-- ⚠️ 监控响应延迟等指标
-- ⚠️ 及时处理异常
+### ⚠️ 监控维护
+- 实时监控API调用成功率
+- 监控API响应延迟
+- 及时处理API异常
+- 关注API版本更新
 
-### 版本管理
-- ⚠️ 关注接口版本更新
-- ⚠️ 确保与下游系统兼容
-- ⚠️ 定期更新接口文档
+### ⚠️ 测试建议
+- 先在测试环境验证
+- 使用Mock数据进行开发
+- 生产环境逐步上线
+- 做好回滚准备
 
-### 开发建议
-- ⚠️ 先在测试环境验证
-- ⚠️ 使用Mock数据进行开发
-- ⚠️ 生产环境逐步上线
-- ⚠️ 做好回滚准备
+### ⚠️ 地址说明
+- 所有 `base-url` 默认为示例地址
+- 首次使用必须配置真实API地址
+- 未配置真实地址时，API调用会失败
+- 建议使用系统提供的连通性检查功能验证
 
 ---
 
@@ -699,11 +621,11 @@ public class MedicalServiceImpl implements MedicalService {
 
 如有对接问题，请联系：
 
-- 摩熵医药开放平台：https://www.moneng.com
-- 腾讯云医疗健康：https://cloud.tencent.com/product/medical
+- 摩熵医药：https://www.moneng.com
+- 腾讯云医疗健康：https://cloud.tencent.com
 - 国家医保服务平台：https://www.nhsa.gov.cn
 - 各地医保局：联系当地医保机构
 
 ---
 
-**对接完成后，请更新 [部署文档](DEPLOYMENT.md) 和 [测试文档](TESTING.md) 中的相关内容。**
+**对接完成后，请使用 API 连通性检查功能验证配置是否正确。**
